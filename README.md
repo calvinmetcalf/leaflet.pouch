@@ -2,7 +2,7 @@ pouch-leaflet
 ===
 the ability to add a geojson layer to [leaflet](http://leafletjs.com/) that is stored in a [pouchdb](http://pouchdb.com/) you can add it from a remote couchdb that is synced to the local one as conectivity permits, for bonus points and because I'm a massacist, it's written in [CoffeeScript](http://coffeescript.org/)
 
-useage
+usage
 ```coffeescript
 geojsonMarkerOptions = 
     radius: 8
@@ -27,3 +27,4 @@ var layer = L.geojson.pouch("idb://SomeName", "http://localhost:5984/someDB").ad
 //this will sync from remote to browser, there are local storage limits, you could also just do
 var otherLayer = L.geojson.pouch("http://localhost:5984/someDB").addTo(map)
 ```
+very rought hold tight for demos and stuff
