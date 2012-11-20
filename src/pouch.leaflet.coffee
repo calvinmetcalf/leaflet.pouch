@@ -51,3 +51,5 @@ L.GeoJSON.Pouch = L.GeoJSON.extend(
 			@localDB.remove doc, ()-> true unless err
 		
 )
+L.geojson.pouch = (db, remoteDB, opts)->
+	new L.GeoJSON.Pouch(db, remoteDB, opts)
