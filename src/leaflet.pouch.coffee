@@ -44,7 +44,14 @@ L.GeoJSON.Pouch = L.GeoJSON.extend(
 								else console.log("you sure about that?")
 										
 	addDoc: (doc, cb) ->
-		@localDB.post doc, cb or ()-> true
+		if "type" of doc and doc.type == "Feature"
+			@localDB.post doc, cb or ()-> true unless "_id" of doc
+			@localDB.put doc, cb or ()-> true if "_id" of doc
+		else if "type" of doc and doc.type == "FeatureCollection"
+			@localDB.bulkDocs doc.features, cb or ()-> true
+		else if doc.length
+			@localDB.bulkDocs doc, cb or ()-> true
+		
 	
 	deleteDoc: (id) ->
 		@localDB.get id, (err, doc) =>
