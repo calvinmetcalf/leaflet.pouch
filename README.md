@@ -27,4 +27,8 @@ var layer = L.geojson.pouch("idb://SomeName", "http://localhost:5984/someDB").ad
 //this will sync from remote to browser, there are local storage limits, you could also just do
 var otherLayer = L.geojson.pouch("http://localhost:5984/someDB").addTo(map)
 ```
-very rought hold tight for demos and stuff
+very rought hold tight for demos and stuff, build with
+
+```bash
+cake build
+```
