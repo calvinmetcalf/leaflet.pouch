@@ -8,7 +8,7 @@ L.GeoJSON.Pouch = L.GeoJSON.extend(
 			opts = remoteDB
 			remoteDB = undefined
 		@_layers = {}
-		pouchParams = L.Util.extend({}, @defaultAJAXparams)
+		pouchParams = L.Util.extend({}, @defaultParams)
 		for i of opts
 			pouchParams[i] = opts[i]  if @pouchParams.hasOwnProperty(i)
 		@pouchParams = pouchParams
@@ -34,29 +34,43 @@ L.GeoJSON.Pouch = L.GeoJSON.extend(
 					Pouch remoteDB, (e2, db2) =>
 						unless e2
 							@remoteDB = db2
-							options = continuous : @pouchParams.continuous
-							switch @pouchParams.direction
-								when "from" then @localDB.replicate.from @remoteDB, options
-								when "to" then @localDB.replicate.to @remoteDB, options
-								when "both"
-									@localDB.replicate.from @remoteDB, options
-									@localDB.replicate.to @remoteDB, options
-								else console.log("you sure about that?")
-										
+							@sync = (cb) ->
+								options = continuous : @pouchParams.continuous
+								switch @pouchParams.direction
+									when "from" then @_from = @localDB.replicate.from @remoteDB, options
+									when "to" then @_to = @localDB.replicate.to @remoteDB, options
+									when "both"
+										@_from = @localDB.replicate.from @remoteDB, options
+										@_to = @localDB.replicate.to @remoteDB, options
+									else noOpt = true
+								if cb
+									cb(null, true) unless noOpt
+									cb("No Option") if noOpt
+							@sync()	
 	addDoc: (doc, cb) ->
 		if "type" of doc and doc.type == "Feature"
 			@localDB.post doc, cb or ()-> true unless "_id" of doc
-			@localDB.put doc, cb or ()-> true if "_id" of doc
+			@localDB.put doc, cb or ()-> true if "_id" of doc and doc._id.slice(0,8) != "_design/"
 		else if "type" of doc and doc.type == "FeatureCollection"
 			@localDB.bulkDocs doc.features, cb or ()-> true
 		else if doc.length
 			@localDB.bulkDocs doc, cb or ()-> true
 		
 	
-	deleteDoc: (id) ->
+	deleteDoc: (id, cb) ->
 		@localDB.get id, (err, doc) =>
-			@localDB.remove doc, ()-> true unless err
-		
+			@localDB.remove doc, cb unless err
+			cb("err") if err
+
+	cancel: (cb) ->
+		switch @pouchParams.direction
+			when "from" then @_from.cancel()
+			when "to" then @_to.cancel()
+			when "both"
+				@_from.cancel()
+				@_to.cancel()
+		cb(null, true)
+	
 )
-L.geojson.pouch = (db, remoteDB, opts)->
+L.geoJson.pouch = (db, remoteDB, opts)->
 	new L.GeoJSON.Pouch(db, remoteDB, opts)
