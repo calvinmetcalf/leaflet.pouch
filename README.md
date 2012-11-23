@@ -28,7 +28,12 @@ var syncLayer = L.geojson.pouch("idb://synclayer", "http://samehost.com/someDB",
 ```
 map <-a- indexedDB <-b-> couchDB
 
-usage
+other option is "continuous" which defaults to true, if false then will only sync once
+
+use layer.sync() to force a sync (this will be helpfull if continuous is false)
+
+other option is layer.cancel() which cancells current replication (only useful if continuous is true)
+
 ```coffeescript
 geojsonMarkerOptions = 
     radius: 8
