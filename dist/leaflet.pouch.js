@@ -13,7 +13,7 @@
         remoteDB = void 0;
       }
       this._layers = {};
-      pouchParams = L.Util.extend({}, this.defaultAJAXparams);
+      pouchParams = L.Util.extend({}, this.defaultParams);
       for (i in opts) {
         if (this.pouchParams.hasOwnProperty(i)) {
           pouchParams[i] = opts[i];
@@ -47,23 +47,37 @@
           });
           if (remoteDB) {
             return Pouch(remoteDB, function(e2, db2) {
-              var options;
               if (!e2) {
                 _this.remoteDB = db2;
-                options = {
-                  continuous: _this.pouchParams.continuous
+                _this.sync = function(cb) {
+                  var noOpt, options;
+                  options = {
+                    continuous: this.pouchParams.continuous
+                  };
+                  switch (this.pouchParams.direction) {
+                    case "from":
+                      this._from = this.localDB.replicate.from(this.remoteDB, options);
+                      break;
+                    case "to":
+                      this._to = this.localDB.replicate.to(this.remoteDB, options);
+                      break;
+                    case "both":
+                      this._from = this.localDB.replicate.from(this.remoteDB, options);
+                      this._to = this.localDB.replicate.to(this.remoteDB, options);
+                      break;
+                    default:
+                      noOpt = true;
+                  }
+                  if (cb) {
+                    if (!noOpt) {
+                      cb(null, true);
+                    }
+                    if (noOpt) {
+                      return cb("No Option");
+                    }
+                  }
                 };
-                switch (_this.pouchParams.direction) {
-                  case "from":
-                    return _this.localDB.replicate.from(_this.remoteDB, options);
-                  case "to":
-                    return _this.localDB.replicate.to(_this.remoteDB, options);
-                  case "both":
-                    _this.localDB.replicate.from(_this.remoteDB, options);
-                    return _this.localDB.replicate.to(_this.remoteDB, options);
-                  default:
-                    return console.log("you sure about that?");
-                }
+                return _this.sync();
               }
             });
           }
@@ -78,7 +92,7 @@
           }
         });
         return this.localDB.put(doc, cb || function() {
-          if ("_id" in doc) {
+          if ("_id" in doc && doc._id.slice(0, 8) !== "_design/") {
             return true;
           }
         });
@@ -92,19 +106,34 @@
         });
       }
     },
-    deleteDoc: function(id) {
+    deleteDoc: function(id, cb) {
       var _this = this;
       return this.localDB.get(id, function(err, doc) {
-        return _this.localDB.remove(doc, function() {
-          if (!err) {
-            return true;
-          }
-        });
+        if (!err) {
+          _this.localDB.remove(doc, cb);
+        }
+        if (err) {
+          return cb("err");
+        }
       });
+    },
+    cancel: function(cb) {
+      switch (this.pouchParams.direction) {
+        case "from":
+          this._from.cancel();
+          break;
+        case "to":
+          this._to.cancel();
+          break;
+        case "both":
+          this._from.cancel();
+          this._to.cancel();
+      }
+      return cb(null, true);
     }
   });
 
-  L.geojson.pouch = function(db, remoteDB, opts) {
+  L.geoJson.pouch = function(db, remoteDB, opts) {
     return new L.GeoJSON.Pouch(db, remoteDB, opts);
   };
 
