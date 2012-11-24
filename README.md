@@ -59,3 +59,7 @@ very rought hold tight for demos and stuff, build with
 ```bash
 cake build
 ```
+build minified version
+```bash
+cake min
+```
