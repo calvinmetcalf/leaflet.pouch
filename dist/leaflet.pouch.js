@@ -31,15 +31,19 @@
               var doc;
               doc = c.doc;
               if (parseInt(doc._rev.slice(0, 1)) === 1) {
-                _this.addData(doc);
+                if ("geometry" in doc) {
+                  _this.addData(doc);
+                }
               } else if (parseInt(doc._rev.slice(0, 1)) > 1) {
                 _this.eachLayer(function(f) {
                   if (f.feature._id === doc._id) {
                     return _this.removeLayer(f);
                   }
                 });
-                if (!doc._deleted) {
-                  _this.addData(doc);
+                if ("geometry" in doc) {
+                  if (!doc._deleted) {
+                    _this.addData(doc);
+                  }
                 }
               }
               return true;

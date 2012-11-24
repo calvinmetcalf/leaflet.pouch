@@ -22,12 +22,13 @@ L.GeoJSON.Pouch = L.GeoJSON.extend(
 					onChange : (c) =>
 						doc = c.doc
 						if parseInt(doc._rev.slice(0, 1)) is 1
-							@addData doc
+							@addData doc if "geometry" of doc
 						else if parseInt(doc._rev.slice(0, 1)) > 1
 							@eachLayer (f) =>
 								@removeLayer f  if f.feature._id is doc._id
-
-							@addData doc  unless doc._deleted
+							
+							if "geometry" of doc
+								@addData doc  unless doc._deleted
 						true			
 				)
 				if remoteDB
