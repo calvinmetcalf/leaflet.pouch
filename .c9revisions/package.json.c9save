@@ -1,0 +1,5 @@
+{"ts":1353421682339,"silentsave":true,"restoring":false,"patch":[[]],"length":0}
+{"contributors":[],"silentsave":false,"ts":1353421815403,"patch":[[{"diffs":[[1,"{\r\n  \r\n\r\n  \"dependencies\": {\r\n    \"coffee-script\":\"1.x\"\r\n  }\r\n}"]],"start1":0,"start2":0,"length1":0,"length2":63}]],"length":63,"saved":false}
+{"ts":1353421847753,"patch":[[{"diffs":[[0,"{\r\n  \r\n"],[1,"\"name\": \"leaflet-pouch\",\r\n  \"version\": \"0.0.1\","],[0,"\r\n  \"dep"]],"start1":0,"start2":0,"length1":15,"length2":62}]],"length":110,"saved":false}
+{"contributors":[],"silentsave":false,"ts":1353700602133,"patch":[[{"diffs":[[0,"t\":\"1.x\""],[1,",\r\n    \"uglify-js2\" : \">= 0.0.1\""],[0,"\r\n  }\r\n}"]],"start1":94,"start2":94,"length1":16,"length2":48}]],"length":142,"saved":false}
+{"ts":1353701273010,"patch":[[{"diffs":[[0,"y-js"],[-1,"2"],[0,"\" : "]],"start1":115,"start2":115,"length1":9,"length2":8}]],"length":141,"saved":false}
