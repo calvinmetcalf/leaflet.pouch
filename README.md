@@ -6,7 +6,7 @@ api
 ---
 
 ```javascript
-L.geoJson(localDB, [remoteDB,] [options,]);
+L.geoJson(localDB, [remoteDB,] [options]);
 ```
 
 
