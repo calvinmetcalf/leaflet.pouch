@@ -15,7 +15,7 @@
       this._layers = {};
       pouchParams = L.Util.extend({}, this.defaultParams);
       for (i in opts) {
-        if (this.pouchParams.hasOwnProperty(i)) {
+        if (pouchParams.hasOwnProperty(i)) {
           pouchParams[i] = opts[i];
         }
       }
