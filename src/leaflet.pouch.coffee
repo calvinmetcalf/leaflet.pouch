@@ -10,7 +10,7 @@ L.GeoJSON.Pouch = L.GeoJSON.extend(
 		@_layers = {}
 		pouchParams = L.Util.extend({}, @defaultParams)
 		for i of opts
-			pouchParams[i] = opts[i]  if @pouchParams.hasOwnProperty(i)
+			pouchParams[i] = opts[i]  if pouchParams.hasOwnProperty(i)
 		@pouchParams = pouchParams
 		L.Util.setOptions @, opts
 		Pouch db, (e1, db1) =>
