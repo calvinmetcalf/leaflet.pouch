@@ -5,7 +5,7 @@ the ability to add a geojson layer to [leaflet](http://leafletjs.com/) that is s
 basic idea if you do 
 
 ```javascript
-var syncLayer = L.geojson.pouch("idb://synclayer", "http://samehost.com/someDB", {leaflet: "options"}).addTo(map)
+var syncLayer = L.geoJson.pouch("idb://synclayer", "http://samehost.com/someDB", {leaflet: "options"}).addTo(map)
 ```
 you get
 map <-a- indexedDB <-b- couchDB
@@ -15,7 +15,7 @@ with a working if your offline and b should be able to resync if you get discone
 if you change the direcection (default is "from") to to e.g.
 
 ```javascript
-var syncLayer = L.geojson.pouch("idb://synclayer", "http://samehost.com/someDB", {direction: "to"}).addTo(map)
+var syncLayer = L.geoJson.pouch("idb://synclayer", "http://samehost.com/someDB", {direction: "to"}).addTo(map)
 ```
 you get
 
@@ -24,7 +24,7 @@ map <-a- indexedDB -b-> couchDB
 and you can also do direction both
 
 ```javascript
-var syncLayer = L.geojson.pouch("idb://synclayer", "http://samehost.com/someDB", {direction: "both"}).addTo(map)
+var syncLayer = L.geoJson.pouch("idb://synclayer", "http://samehost.com/someDB", {direction: "both"}).addTo(map)
 ```
 map <-a- indexedDB <-b-> couchDB
 
@@ -54,9 +54,9 @@ layer.addDoc GeoJSONfeature
 ```
 or
 ```javascript
-var layer = L.geojson.pouch("idb://SomeName", "http://localhost:5984/someDB").addTo(map)
+var layer = L.geoJson.pouch("idb://SomeName", "http://localhost:5984/someDB").addTo(map)
 //this will sync from remote to browser, there are local storage limits, you could also just do
-var otherLayer = L.geojson.pouch("http://localhost:5984/someDB").addTo(map)
+var otherLayer = L.geoJson.pouch("http://localhost:5984/someDB").addTo(map)
 ```
 very rought hold tight for demos and stuff, build with
 
