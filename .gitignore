@@ -1,3 +1,4 @@
-modules
 ~*
 node_modules
+.c9revisions
+modules
