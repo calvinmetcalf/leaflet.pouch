@@ -52,9 +52,7 @@ layer.addTo(map)
 
 layer.addDoc GeoJSONfeature
 ```
-or
-
-very rought hold tight for demos and stuff, build with
+the source of the demo is in it's [own repo](https://github.com/calvinmetcalf/leaf-couch)
 
 ```bash
 cake build
