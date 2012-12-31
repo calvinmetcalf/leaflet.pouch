@@ -89,30 +89,39 @@
       });
     },
     addDoc: function(doc, cb) {
-      if ("type" in doc && doc.type === "Feature") {
-        this.localDB.post(doc, cb || function() {
-          if (!("_id" in doc)) {
-            return true;
-          }
-        });
-        return this.localDB.put(doc, cb || function() {
-          if ("_id" in doc && doc._id.slice(0, 8) !== "_design/") {
-            return true;
-          }
-        });
-      } else if ("type" in doc && doc.type === "FeatureCollection") {
-        return this.localDB.bulkDocs(doc.features, cb || function() {
+      if (cb == null) {
+        cb = function() {
           return true;
-        });
-      } else if (doc.length) {
-        return this.localDB.bulkDocs(doc, cb || function() {
-          return true;
-        });
+        };
       }
+      if ("type" in doc && doc.type === "Feature") {
+        if (!("_id" in doc)) {
+          return this.localDB.post(doc, cb);
+        } else if ("_id" in doc && doc._id.slice(0, 8) !== "_design/") {
+          return this.localDB.put(doc, cb);
+        }
+      } else if ("type" in doc && doc.type === "FeatureCollection") {
+        return this.localDB.bulkDocs(doc.features, cb);
+      } else if (doc.length) {
+        return this.localDB.bulkDocs(doc, cb);
+      }
+    },
+    getDoc: function(doc, cb) {
+      if (cb == null) {
+        cb = function() {
+          return true;
+        };
+      }
+      return this.localDB.get(id, cb);
     },
     deleteDoc: function(id, cb) {
       var _this = this;
-      return this.localDB.get(id, function(err, doc) {
+      if (cb == null) {
+        cb = function() {
+          return true;
+        };
+      }
+      return this.getDoc(id, function(err, doc) {
         if (!err) {
           _this.localDB.remove(doc, cb);
         }
