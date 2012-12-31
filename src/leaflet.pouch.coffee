@@ -48,18 +48,21 @@ L.GeoJSON.Pouch = L.GeoJSON.extend(
 									cb(null, true) unless noOpt
 									cb("No Option") if noOpt
 							@sync()	
-	addDoc: (doc, cb) ->
+	addDoc: (doc, cb = ()-> true) ->
 		if "type" of doc and doc.type == "Feature"
-			@localDB.post doc, cb or ()-> true unless "_id" of doc
-			@localDB.put doc, cb or ()-> true if "_id" of doc and doc._id.slice(0,8) != "_design/"
+			unless "_id" of doc
+				@localDB.post doc, cb
+			else if "_id" of doc and doc._id.slice(0,8) != "_design/"
+				@localDB.put doc, cb 
 		else if "type" of doc and doc.type == "FeatureCollection"
-			@localDB.bulkDocs doc.features, cb or ()-> true
+			@localDB.bulkDocs doc.features, cb
 		else if doc.length
-			@localDB.bulkDocs doc, cb or ()-> true
-		
+			@localDB.bulkDocs doc, cb
+	getDoc: (doc, cb = ()-> true) ->
+		@localDB.get id, cb
 	
-	deleteDoc: (id, cb) ->
-		@localDB.get id, (err, doc) =>
+	deleteDoc: (id, cb = ()-> true) ->
+		@getDoc id, (err, doc) =>
 			@localDB.remove doc, cb unless err
 			cb("err") if err
 
