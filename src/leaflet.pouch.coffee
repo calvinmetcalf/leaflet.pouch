@@ -58,7 +58,7 @@ L.GeoJSON.Pouch = L.GeoJSON.extend(
 			@localDB.bulkDocs doc.features, cb
 		else if doc.length
 			@localDB.bulkDocs doc, cb
-	getDoc: (doc, cb = ()-> true) ->
+	getDoc: (id, cb = ()-> true) ->
 		@localDB.get id, cb
 	
 	deleteDoc: (id, cb = ()-> true) ->

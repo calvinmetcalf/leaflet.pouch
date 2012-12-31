@@ -106,7 +106,7 @@
         return this.localDB.bulkDocs(doc, cb);
       }
     },
-    getDoc: function(doc, cb) {
+    getDoc: function(id, cb) {
       if (cb == null) {
         cb = function() {
           return true;
