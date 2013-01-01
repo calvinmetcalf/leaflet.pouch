@@ -3,10 +3,24 @@ L.GeoJSON.Pouch = L.GeoJSON.extend(
 		continuous: true
 		direction: "from"
 
-	initialize: (db, remoteDB, opts) ->
+	initialize: (remoteDB, opts) ->
 		if typeof remoteDB is "object"
 			opts = remoteDB
 			remoteDB = undefined
+		if remoteDB
+			if remoteDB.slice(0,3)=="idb"
+				db = remoteDB
+				remoteDB = undefined
+			else if remoteDB.slice(0,4)=="http"
+				if opts and opts.idbName
+					db = "idb://"+opts.idbName
+				else
+					db = "idb://"+remoteDB.split("/").pop()
+		else
+			if opts and opts.idbName
+				db = "idb://"+opts.idbName
+			else
+				db = "idb://"+location.href.split("/").pop()
 		@_layers = {}
 		pouchParams = L.Util.extend({}, @defaultParams)
 		for i of opts
