@@ -5,12 +5,30 @@
       continuous: true,
       direction: "from"
     },
-    initialize: function(db, remoteDB, opts) {
-      var i, pouchParams,
+    initialize: function(remoteDB, opts) {
+      var db, i, pouchParams,
         _this = this;
       if (typeof remoteDB === "object") {
         opts = remoteDB;
         remoteDB = void 0;
+      }
+      if (remoteDB) {
+        if (remoteDB.slice(0, 3) === "idb") {
+          db = remoteDB;
+          remoteDB = void 0;
+        } else if (remoteDB.slice(0, 4) === "http") {
+          if (opts && opts.idbName) {
+            db = "idb://" + opts.idbName;
+          } else {
+            db = "idb://" + remoteDB.split("/").pop();
+          }
+        }
+      } else {
+        if (opts && opts.idbName) {
+          db = "idb://" + opts.idbName;
+        } else {
+          db = "idb://" + location.href.split("/").pop();
+        }
       }
       this._layers = {};
       pouchParams = L.Util.extend({}, this.defaultParams);
