@@ -6,24 +6,26 @@ api
 ---
 
 ```javascript
-L.geoJson(localDB, [remoteDB,] [options]);
+L.geoJson(remoteDB,[options]);
 ```
 
 
 basic idea if you do 
 
 ```javascript
-var syncLayer = L.geoJson.pouch("idb://LocalDB", "http://samehost.com/someDB").addTo(map)
+var syncLayer = L.geoJson.pouch( "http://samehost.com/someDB").addTo(map)
 ```
 you get an indexedDB layer which keeps synced with a couchDB but with the contents stored locally. 
 
-you can pass an option object if you want with both leaflet geojson options and 2 new ones
+you can pass an option object if you want with both leaflet geojson options and 3 new ones
 
 first is direction, it defaults to "from" which pulles stuff from the remoteDB to the localDB, you can also do "to" which is the opposite, localDB to remoteDB and "both" which syncs both ways.
 
-other option is "continuous" which defaults to true, if false then will only sync when it's created and you'll have to manually sync it. Use layer.sync() to force a sync.
+second option is "continuous" which defaults to true, if false then will only sync when it's created and you'll have to manually sync it. Use layer.sync() to force a sync.
 
-other option is layer.cancel() which cancels current replication.
+third option is "idbName" which is the name for the local DB if you don't want to use the dafault, it defaults to whatever the remote database is, if there is no remote db and this isn't defined it defaults to the page name.
+
+other method is layer.cancel() which cancels current replication.
 
 ex in code 
 
