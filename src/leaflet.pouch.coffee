@@ -8,19 +8,19 @@ L.GeoJSON.Pouch = L.GeoJSON.extend(
 			opts = remoteDB
 			remoteDB = undefined
 		if remoteDB
-			if remoteDB.slice(0,3)=="idb"
+			if remoteDB.slice(0,4)!=="http"
 				db = remoteDB
 				remoteDB = undefined
 			else if remoteDB.slice(0,4)=="http"
 				if opts and opts.idbName
-					db = "idb://"+opts.idbName
+					db = opts.idbName
 				else
-					db = "idb://"+remoteDB.split("/").pop()
+					db = remoteDB.split("/").pop()
 		else
 			if opts and opts.idbName
-				db = "idb://"+opts.idbName
+				db = opts.idbName
 			else
-				db = "idb://"+location.href.split("/").pop()
+				db = location.href.split("/").pop()
 		@_layers = {}
 		pouchParams = L.Util.extend({}, @defaultParams)
 		for i of opts
@@ -61,7 +61,26 @@ L.GeoJSON.Pouch = L.GeoJSON.extend(
 								if cb
 									cb(null, true) unless noOpt
 									cb("No Option") if noOpt
-							@sync()	
+							@sync()
+			else if remoteDB
+				Pouch remoteDB, (e3, db3) =>
+					unless e3
+						@localDB = db3
+						@localDB.changes(
+							continuous : @pouchParams.continuous
+							include_docs : true
+							onChange : (c) =>
+								doc = c.doc
+								if parseInt(doc._rev.slice(0, 1)) is 1
+									@addData doc if "geometry" of doc
+								else if parseInt(doc._rev.slice(0, 1)) > 1
+									@eachLayer (f) =>
+										@removeLayer f  if f.feature._id is doc._id
+							
+									if "geometry" of doc
+										@addData doc  unless doc._deleted
+								true			
+						)
 	addDoc: (doc, cb = ()-> true) ->
 		if "type" of doc and doc.type == "Feature"
 			unless "_id" of doc
