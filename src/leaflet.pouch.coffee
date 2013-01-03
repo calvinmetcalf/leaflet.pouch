@@ -29,12 +29,13 @@ L.GeoJSON.Pouch = L.GeoJSON.extend(
 				while db == ""
 					db = parts.pop()
 		@_layers = {}
+		@_dbName=db
 		pouchParams = L.Util.extend({}, @defaultParams)
 		for i of opts
 			pouchParams[i] = opts[i]  if pouchParams.hasOwnProperty(i)
 		@pouchParams = pouchParams
 		L.Util.setOptions @, opts
-		Pouch db, (e1, db1) =>
+		Pouch @_dbName, (e1, db1) =>
 			unless e1
 				@localDB = db1
 				@localDB.changes(
@@ -112,6 +113,8 @@ L.GeoJSON.Pouch = L.GeoJSON.extend(
 				@_from.cancel()
 				@_to.cancel()
 		cb(null, true)
+	destroy: (cb=()->true)->
+		Pouch.destroy @_dbName,cb
 )
 L.geoJson.pouch = (remoteDB, opts)->
 	new L.GeoJSON.Pouch(remoteDB, opts)
