@@ -4,6 +4,7 @@ L.GeoJSON.Pouch = L.GeoJSON.extend(
 		direction: "from"
 
 	initialize: (remoteDB, opts) ->
+		@_orig = [remoteDB, opts]
 		if typeof remoteDB is "object"
 			opts = remoteDB
 			remoteDB = undefined
@@ -15,12 +16,18 @@ L.GeoJSON.Pouch = L.GeoJSON.extend(
 				if opts and opts.idbName
 					db = opts.idbName
 				else
-					db = remoteDB.split("/").pop()
+					parts = remoteDB.split("/")
+					db = parts.pop()
+					while db == ""
+						db = parts.pop()
 		else
 			if opts and opts.idbName
 				db = opts.idbName
 			else
-				db = location.href.split("/").pop()
+				parts = location.href.split("/")
+				db = parts.pop()
+				while db == ""
+					db = parts.pop()
 		@_layers = {}
 		pouchParams = L.Util.extend({}, @defaultParams)
 		for i of opts
@@ -46,22 +53,20 @@ L.GeoJSON.Pouch = L.GeoJSON.extend(
 						true			
 				)
 				if remoteDB
-					Pouch remoteDB, (e2, db2) =>
-						unless e2
-							@remoteDB = db2
-							@sync = (cb) ->
-								options = continuous : @pouchParams.continuous
-								switch @pouchParams.direction
-									when "from" then @_from = @localDB.replicate.from @remoteDB, options
-									when "to" then @_to = @localDB.replicate.to @remoteDB, options
-									when "both"
-										@_from = @localDB.replicate.from @remoteDB, options
-										@_to = @localDB.replicate.to @remoteDB, options
-									else noOpt = true
-								if cb
-									cb(null, true) unless noOpt
-									cb("No Option") if noOpt
-							@sync()
+						@remoteDB = remoteDB
+						@sync = (cb) ->
+							options = continuous : @pouchParams.continuous
+							switch @pouchParams.direction
+								when "from" then @_from = Pouch.replicate @localDB, @remoteDB, options
+								when "to" then @_to = Pouch.replicate @remoteDB, @localDB,  options
+								when "both"
+									@_from = Pouch.replicate @localDB, @remoteDB, options
+									@_to = Pouch.replicate @remoteDB, @localDB,  options
+								else noOpt = true
+							if cb
+								cb(null, true) unless noOpt
+								cb("No Option") if noOpt
+						@sync()
 			else if remoteDB
 				Pouch remoteDB, (e3, db3) =>
 					unless e3
@@ -107,7 +112,6 @@ L.GeoJSON.Pouch = L.GeoJSON.extend(
 				@_from.cancel()
 				@_to.cancel()
 		cb(null, true)
-	
 )
-L.geoJson.pouch = (db, remoteDB, opts)->
-	new L.GeoJSON.Pouch(db, remoteDB, opts)
+L.geoJson.pouch = (remoteDB, opts)->
+	new L.GeoJSON.Pouch(remoteDB, opts)
