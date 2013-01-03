@@ -1,4 +1,4 @@
-pouch-leaflet
+Leaflet.Pouch
 ===
 the ability to add a geojson layer to [leaflet](http://leafletjs.com/) that is stored in a [pouchdb](http://pouchdb.com/) you can add it from a remote couchdb that is synced to the local one as conectivity permits, for bonus points and because I'm a massacist, it's written in [CoffeeScript](http://coffeescript.org/)
 
@@ -15,7 +15,7 @@ basic idea if you do
 ```javascript
 var syncLayer = L.geoJson.pouch( "http://samehost.com/someDB").addTo(map)
 ```
-you get an indexedDB layer which keeps synced with a couchDB but with the contents stored locally. 
+you get a remote couchDB layer, that if IndexedDB is available, stored localy as that, with a fall back to WebSQL and if neither of those are available, just loads the remote db.
 
 you can pass an option object if you want with both leaflet geojson options and 3 new ones
 
@@ -25,15 +25,13 @@ second option is "continuous" which defaults to true, if false then will only sy
 
 third option is "idbName" which is the name for the local DB if you don't want to use the dafault, it defaults to whatever the remote database is, if there is no remote db and this isn't defined it defaults to the page name.
 
-other method is layer.cancel() which cancels current replication.
+other methods are layer.cancel() which cancels current replication, layer.sync() which does a one time replication, and layer.destroy() which deletes the local db.
 
 ex in code 
 
 this is in JavaScript and just 
 ```javascript
-var layer = L.geoJson.pouch("idb://SomeName", "http://localhost:5984/someDB").addTo(map)
-//this will sync from remote to browser, there are local storage limits, you could also just do
-var otherLayer = L.geoJson.pouch("http://localhost:5984/someDB").addTo(map)
+var layer = L.geoJson.pouch("http://localhost:5984/someDB").addTo(map)
 ```
 this is coffee script and just syncs from a a remote with no localone, the path is reletive to the document if it's an attachment in a database
 ```coffeescript
