@@ -8,7 +8,7 @@ L.GeoJSON.Pouch = L.GeoJSON.extend(
 			opts = remoteDB
 			remoteDB = undefined
 		if remoteDB
-			if remoteDB.slice(0,4)!=="http"
+			if remoteDB.slice(0,4)!="http"
 				db = remoteDB
 				remoteDB = undefined
 			else if remoteDB.slice(0,4)=="http"
