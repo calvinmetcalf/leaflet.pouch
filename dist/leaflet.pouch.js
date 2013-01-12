@@ -22,9 +22,9 @@
             db = opts.idbName;
           } else {
             parts = remoteDB.split("/");
-            db = parts.pop();
+            db = parts.shift();
             while (db === "") {
-              db = parts.pop();
+              db = parts.shift();
             }
           }
         }
@@ -32,10 +32,10 @@
         if (opts && opts.idbName) {
           db = opts.idbName;
         } else {
-          parts = location.href.split("/");
-          db = parts.pop();
+          parts = location.pathname.split("/");
+          db = parts.shift();
           while (db === "") {
-            db = parts.pop();
+            db = parts.shift();
           }
         }
       }
